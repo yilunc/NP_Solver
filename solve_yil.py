@@ -17,18 +17,29 @@ def parse(file_path):
               adj[i].append(-1)
   return adj, scores
 
-def write_solution(solution, file_name):
-  with open('{0}.sol'.format(file_name), 'wb') as f:
+def write_solution(solution):
+  with open('output', 'wb') as f:
     for path in solution:
       for horse in path[:-1]:
         f.write("{0} ".format(horse))
       f.write("{0}; ".format(path[-1]))
+    f.write("\n")
+
+
 
 #TODO
 def solve_instance(instance):
   adj = instance[0]
   scores = instance[1]
   best_solution = []
+
+  edges = []
+  for h in adj:
+    for i in range(len(adj[horse])):
+      if adj[horse][i]:
+        adges.append((horse,i))
+
+
 
   return best_solution
 
@@ -37,3 +48,4 @@ def solve():
     if file.endswith(".in"):
         instance = parse("cs170_final_inputs/{0}".format(str(file)))
         solution = solve_instance(instance)
+        write_solution(solution)
