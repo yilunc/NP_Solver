@@ -44,6 +44,12 @@ def write_solution(solution):
       f.write("{0}; ".format(path[-1]))
     f.write("\n")
 
+def score_solution(solution):
+  score = 0
+  for path in solution
+    score += sum(path)*len(path)
+  return score
+
 def solve_instance(instance):
   adj = instance[0]
   horses = instance[1]
@@ -73,9 +79,10 @@ def solve_instance(instance):
           curr_subgraph.append(node)
     nodes = [node for node in nodes if node not in curr_subgraph]
     connected_subgraphs.append(curr_subgraph)
-  print connected_subgraphs
 
-  edge_to_compress = edges[int(random.random()*len(edges))]
+  solution = []
+  for sg in connected_subgraphs:
+    edge_to_compress = edges[int(random.random()*len(edges))]
 
   return best_solution
 
