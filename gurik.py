@@ -87,11 +87,3 @@ def solver(instance):
     print "\tSCORE: " + str(finalscore)
     print "\tAVERAGE TEAM SIZE: " + str(len_sum/len(final))
     return final
-
-
-
-
-
-solver()
-
-
