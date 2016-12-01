@@ -1,11 +1,12 @@
 import sys, os
 import solve_yil
 import solve_tom
+import gurik
 
 ALGORITHMS = {
               "yilun":  solve_yil.solve_instance,
               "tommy":  solve_tom.solve_instance_BFS_Greedy,
-              "gurik":  None,
+              "gurik":  gurik.solver,
               "sidd" :  None,
               }
 
@@ -45,16 +46,16 @@ def parse_instance(file_path):
 
 def solve(alg_name=None, in_num=None):
   instances = {}
-  algorithms = []
+  algorithms = ALGORITHMS
 
   if alg_name:
     algorithms = [alg_name]
 
   if in_num:
     for file in os.listdir("cs170_final_inputs"):
-      if str(file) == "{0}.in".format(input_num):
-        print("Parsing {0}.in ...".format(input_num))
-        instances[input_num] = (parse_instance("cs170_final_inputs/{0}".format(str(file))))
+      if str(file) == "{0}.in".format(in_num):
+        print("Parsing {0}.in ...".format(in_num))
+        instances[in_num] = (parse_instance("cs170_final_inputs/{0}".format(str(file))))
   else:
     for file in os.listdir("cs170_final_inputs"):
       if file.endswith(".in"):
@@ -74,5 +75,7 @@ elif (len(sys.argv) == 2) and sys.argv[1].isdigit():
   solve(in_num=int(sys.argv[1]))
 elif (len(sys.argv) == 2):
   solve(alg_name=sys.argv[1])
+elif (len(sys.argv) == 1):
+  solve()
 else:
   print("ERROR: invalid argument(s).")
