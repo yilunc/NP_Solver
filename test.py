@@ -48,7 +48,7 @@ def solve(alg_name=None, in_num=None):
   algorithms = []
 
   if alg_name:
-    algorithms = [ALGORITHMS[alg_name]]
+    algorithms = [alg_name]
 
   if in_num:
     for file in os.listdir("cs170_final_inputs"):
