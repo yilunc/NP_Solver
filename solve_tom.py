@@ -157,6 +157,3 @@ def solve():
     #         write_solution(solution)
     instance = parse_instance("inputs/1.in")
     solution = solve_instance_BFS_Greedy(instance)
-
-
-solve()

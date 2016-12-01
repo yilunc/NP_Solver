@@ -1,3 +1,14 @@
+import sys, os
+import solve_yil
+import solve_tom
+
+ALGORITHMS = {
+              "yilun":  solve_yil.solve_instance,
+              "tommy":  solve_tom.solve_instance_BFS_Greedy,
+              "gurik":  None,
+              "sidd" :  None,
+              }
+
 def score_solution(solution, instance):
   score = 0
   for path in solution:
@@ -32,26 +43,36 @@ def parse_instance(file_path):
               adj[i].append(-1)
   return adj, horses
 
-def solve(in_num=None, script_path=None):
-  if not input_num:
-    for file in os.listdir("cs170_final_inputs"):
-      if file.endswith(".in"):
-          print("Running on {0}: ".format(file))
-          instance = parse_instance("cs170_final_inputs/{0}".format(str(file)))
-          print("\tFinished parsing..")
-          solution = solve_instance(instance)
-          print("\tFound approximation:")
-          write_solution(solution)
-          print ("\t{0}".format(solution))
-  else:
+def solve(alg_name=None, in_num=None):
+  instances = {}
+  algorithms = []
+
+  if alg_name:
+    algorithms = [ALGORITHMS[alg_name]]
+
+  if in_num:
     for file in os.listdir("cs170_final_inputs"):
       if str(file) == "{0}.in".format(input_num):
-          print("Running on {0}.in".format(input_num))
-          instance = parse_instance("cs170_final_inputs/{0}".format(str(file)))
-          print("\tFinished parsing..")
-          solution = solve_instance(instance)
-          write_solution(solution)
-          print ("\tFound approximation: {0}".format(solution))
+        print("Parsing {0}.in ...".format(input_num))
+        instances[input_num] = (parse_instance("cs170_final_inputs/{0}".format(str(file))))
+  else:
+    for file in os.listdir("cs170_final_inputs"):
+      if file.endswith(".in"):
+        print("Parsing {0} ... ".format(file))
+        instances[int(file.split('.')[0])] = parse_instance("cs170_final_inputs/{0}".format(str(file)))
 
-if __name__ == '__main__':
-  solve()
+  for instance in range(1, len(instances)+1):
+    for alg in ALGORITHMS:
+      print("Solving on {0}.in on {1}'s algorithm...".format(instace, alg))
+      solution = ALGORITHMS[alg](instances[instance])
+      write_solution(solution)
+      print ("\tFound approximation: {0}".format(solution))
+
+if (len(sys.argv) == 3) and sys.argv[2].isdigit():
+  solve(alg_name=sys.argv[1], in_num=int(sys.argv[2]))
+elif (len(sys.argv) == 2) and sys.argv[1].isdigit():
+  solve(in_num=int(sys.argv[1]))
+elif (len(sys.argv) == 2):
+  solve(alg_name=sys.argv[1])
+else:
+  print("ERROR: invalid argument(s).")

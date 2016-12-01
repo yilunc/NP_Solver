@@ -1,4 +1,4 @@
-import os, random
+import random
 
 class Node():
   def __init__(self, num, score, incoming, outgoing):
