@@ -62,7 +62,7 @@ def solve(alg_name=None, in_num=None):
         instances[int(file.split('.')[0])] = parse_instance("cs170_final_inputs/{0}".format(str(file)))
 
   for instance in range(1, len(instances)+1):
-    for alg in ALGORITHMS:
+    for alg in algorithms:
       print("Solving on {0}.in on {1}'s algorithm...".format(instance, alg))
       solution = ALGORITHMS[alg](instances[instance])
       write_solution(solution)
