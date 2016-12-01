@@ -12,13 +12,16 @@ ALGORITHMS = {
 
 def score_solution(solution, instance):
   score = 0
+  len_sum = 0
   for path in solution:
     path_score = 0
     for vertex_num in path:
       if vertex_num is not None:
         path_score += int(instance[1][vertex_num])
     score += path_score*len(path)
-  return score
+    len_sum += len(path)
+  avg_len = float(len_sum)/float(len(solution))
+  return score, avg_len
 
 def write_solution(solution):
   with open('output', 'wb') as f:
@@ -72,9 +75,11 @@ def solve(alg_name=None, in_num=None):
     for alg in algorithms:
       print("Solving on {0}.in on {1}'s algorithm...".format(instance, alg))
       solution = ALGORITHMS[alg](instances[instance])
+      score, avg_len = score_solution(solution, instances[instance])
       write_solution(solution)
-      print ("\tApproximation: {0}".format(solution))
-      print ("\tScore: {0}".format(score_solution(solution, instances[instance])))
+      print ("\tApproximation: {0}".format(solution)[:100] + "...")
+      print ("\tAverage Team Size: {0}".format(avg_len))
+      print ("\tScore: {0}".format(score))
 
 if (len(sys.argv) == 3) and sys.argv[2].isdigit():
   solve(alg_name=sys.argv[1], in_num=int(sys.argv[2]))

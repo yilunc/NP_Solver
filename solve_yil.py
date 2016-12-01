@@ -193,5 +193,6 @@ def solve_instance(instance):
       subgraph.compress(edge[0], edge[1])
     print "\t\t Expanding Compressed Nodes"
     while subgraph.has_compressed_node:
+      edge = subgraph.edges[int(random.random()*len(subgraph.edges))]
       subgraph.compress(edge[0], edge[1])
   return best_solution
