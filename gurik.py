@@ -82,5 +82,4 @@ def solver(instance):
 
     print "\tBEFORE COMPRESS: " + str(len(lst))
     print "\tAFTER COMPRESS: " + str(len(final))
-    print "\tAVERAGE TEAM SIZE: " + str(len_sum/len(final))
     return final

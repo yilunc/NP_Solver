@@ -151,6 +151,9 @@ def get_edge_data(instance):
           "outgoing_edges": outgoing_edges
           }
 
+def can_append(edge, path):
+  return path[-1] == edge[0]
+
 def solve_instance(instance):
   adj = instance[0]
   horses = instance[1]
