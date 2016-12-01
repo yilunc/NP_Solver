@@ -72,18 +72,15 @@ def solver(instance):
                 used2.add(j)
     finalscore = 0
     len_sum = 0
-    for element in final:
-        len_sum += len(element)
+    for path in final:
+        len_sum += len(path)
         score = 0
-        for i in range(0,len(element)):
-            if element[i] != None:
-                score += int(horses[element[i]])
-        finalscore += score * len(element)
+        for i in range(len(path)):
+            if path[i] != None:
+                score += int(horses[path[i]])
+        finalscore += score * len(path)
 
     print "\tBEFORE COMPRESS: " + str(len(lst))
     print "\tAFTER COMPRESS: " + str(len(final))
-    print "\tTEAMS" 
-    print "\t" + str(final)
-    print "\tSCORE: " + str(finalscore)
     print "\tAVERAGE TEAM SIZE: " + str(len_sum/len(final))
     return final

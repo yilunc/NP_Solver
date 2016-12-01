@@ -5,8 +5,8 @@ import gurik
 
 ALGORITHMS = {
               "yilun":  solve_yil.solve_instance,
-              "tommy":  solve_tom.solve_instance_BFS_Greedy,
               "gurik":  gurik.solver,
+              "tommy":  solve_tom.solve_instance_BFS_Greedy,
               "sidd" :  None,
               }
 
@@ -15,7 +15,8 @@ def score_solution(solution, instance):
   for path in solution:
     path_score = 0
     for vertex_num in path:
-      path_score += instance[1][vertex_num]
+      if vertex_num is not None:
+        path_score += int(instance[1][vertex_num])
     score += path_score*len(path)
   return score
 
@@ -46,6 +47,7 @@ def parse_instance(file_path):
 
 def solve(alg_name=None, in_num=None):
   instances = {}
+  instance_nums = []
   algorithms = ALGORITHMS
 
   if alg_name:
@@ -56,18 +58,23 @@ def solve(alg_name=None, in_num=None):
       if str(file) == "{0}.in".format(in_num):
         print("Parsing {0}.in ...".format(in_num))
         instances[in_num] = (parse_instance("cs170_final_inputs/{0}".format(str(file))))
+        instance_nums.append(in_num)
   else:
     for file in os.listdir("cs170_final_inputs"):
       if file.endswith(".in"):
         print("Parsing {0} ... ".format(file))
         instances[int(file.split('.')[0])] = parse_instance("cs170_final_inputs/{0}".format(str(file)))
+        instance_nums.append(int(file.split('.')[0]))
 
-  for instance in range(1, len(instances)+1):
+  instance_nums.sort()
+
+  for instance in instance_nums:
     for alg in algorithms:
       print("Solving on {0}.in on {1}'s algorithm...".format(instance, alg))
       solution = ALGORITHMS[alg](instances[instance])
       write_solution(solution)
-      print ("\tFound approximation: {0} with score {1}".format(solution, score_solution(solution, instance)))
+      print ("\tApproximation: {0}".format(solution))
+      print ("\tScore: {0}".format(score_solution(solution, instances[instance])))
 
 if (len(sys.argv) == 3) and sys.argv[2].isdigit():
   solve(alg_name=sys.argv[1], in_num=int(sys.argv[2]))
