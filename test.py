@@ -63,7 +63,7 @@ def solve(alg_name=None, in_num=None):
 
   for instance in range(1, len(instances)+1):
     for alg in ALGORITHMS:
-      print("Solving on {0}.in on {1}'s algorithm...".format(instace, alg))
+      print("Solving on {0}.in on {1}'s algorithm...".format(instance, alg))
       solution = ALGORITHMS[alg](instances[instance])
       write_solution(solution)
       print ("\tFound approximation: {0}".format(solution))
