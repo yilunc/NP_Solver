@@ -1,4 +1,4 @@
-import os, random, math
+import os, random, math, copy
 
 def parse_instance(file_path):
   horses = []
@@ -77,7 +77,7 @@ def chooseHorse(incoming_edges, outgoing_edges):
 
 def updateOutgoingEdges(outgoing_edges, best_solution):
     for e in best_solution:
-        print("horse " + str(e) + " was deleted.")
+        #print("horse " + str(e) + " was deleted.")
         del outgoing_edges[e]
         for horse in outgoing_edges:
             if e in outgoing_edges[horse]:
@@ -107,6 +107,7 @@ def solve_instance_BFS_Greedy(instance):
                 outgoing_edges[h].append(i)
 
     solution = []
+    outgoing_edges_base = copy.deepcopy(outgoing_edges)
     while (len(outgoing_edges) > 0):
         # Find the best path
         horse = chooseHorse(incoming_edges, outgoing_edges)
@@ -114,26 +115,35 @@ def solve_instance_BFS_Greedy(instance):
         initialPath.appendToPath(horse,horses)
         queue = Queue()
         queue.enqueue(initialPath)
-        print(initialPath.path)
+        #print(initialPath.path)
         solutions = []
+        print("outgoing edges is of size " + str(len(outgoing_edges)))
         while (not queue.isEmpty()):
-            print("Queue size is " + str(queue.size()))
+            #print("Queue size is " + str(queue.size()))
+
             currPath = queue.dequeue()
             currHorse = currPath.currHorse()
-            print("New Curr Horse is: " + str(currHorse))
-            if len(outgoing_edges[currHorse]) == 0:
+            # print("New Curr Horse is: " + str(currHorse))
+            # print(outgoing_edges[currHorse])
+            if len(outgoing_edges[currHorse]) == 0: # sketch
                 solutions.append(currPath)
             else:
-                if currHorse in outgoing_edges:
-                    for horseFriend in outgoing_edges[currHorse]:
-                        #path = currPath.spawnNewPath()
-                        if horseFriend not in currPath.path and horseFriend in outgoing_edges:
-                            path = currPath.spawnNewPath()
-                            path.appendToPath(horseFriend, horses)
-                            queue.enqueue(path)
-                        else:
-                            if currPath not in solutions:
-                                solutions.append(currPath)
+                #if currHorse in outgoing_edges:
+                for horseFriend in outgoing_edges[currHorse]:
+                    #path = currPath.spawnNewPath()
+                    if horseFriend not in currPath.path and horseFriend in outgoing_edges:
+                        path = currPath.spawnNewPath()
+                        path.appendToPath(horseFriend, horses)
+                        queue.enqueue(path)
+                        for horse in outgoing_edges:
+                            if horseFriend in outgoing_edges[horse]:
+                                outgoing_edges[horse].remove(horseFriend)
+                        # del outgoing_edges[horseFriend]
+                        # it essentially becomes a HUGE BFS through fucking everything since we are never removing any nodes once they add it to a path.
+                        # AGHHHH
+                    else:
+                        if currPath not in solutions:
+                            solutions.append(currPath)
 
         best_solution = []
         bestWeight = -1
@@ -144,7 +154,8 @@ def solve_instance_BFS_Greedy(instance):
         print("Best Solution is: ")
         print(best_solution)
         solution.append(tuple(best_solution))
-        outgoing_edges = updateOutgoingEdges(outgoing_edges, best_solution)
+        outgoing_edges_base = updateOutgoingEdges(outgoing_edges_base, best_solution)
+        outgoing_edges = copy.deepcopy(outgoing_edges_base)
     print(solution)
     return solution
 
