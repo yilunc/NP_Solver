@@ -60,6 +60,7 @@ class Graph():
     self.nodes = nodes
     self.get_node_dict = self._parse_nodes(nodes)
     self.edges = self._get_edges(nodes)
+    self.num_compressed_nodes = 0
 
   def __str__(self):
     s = "Graph("
@@ -124,6 +125,10 @@ class Graph():
     self._remove_node(node1)
     self._remove_node(node2)
     self._add_node(CompressedNode(node1, node2))
+    self.num_compressed_nodes += 1
+
+  def has_compressed_node(self):
+    return self.num_compressed_nodes > 0
 
 def get_edge_data(instance):
   adj = instance[0]
@@ -182,9 +187,11 @@ def solve_instance(instance):
   print "\t\t Solving.."
   solution = []
   for subgraph in connected_subgraphs:
+    print "\t\t Compressing Subgraph.."
     while len(subgraph) > 2:
       edge = subgraph.edges[int(random.random()*len(subgraph.edges))]
       subgraph.compress(edge[0], edge[1])
-      print str(subgraph) + "\n"
-    print subgraph
+    print "\t\t Expanding Compressed Nodes"
+    while subgraph.has_compressed_node:
+      subgraph.compress(edge[0], edge[1])
   return best_solution

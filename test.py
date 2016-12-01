@@ -66,7 +66,7 @@ def solve(alg_name=None, in_num=None):
       print("Solving on {0}.in on {1}'s algorithm...".format(instance, alg))
       solution = ALGORITHMS[alg](instances[instance])
       write_solution(solution)
-      print ("\tFound approximation: {0}".format(solution))
+      print ("\tFound approximation: {0} with score {1}".format(solution, score_solution(solution, instance)))
 
 if (len(sys.argv) == 3) and sys.argv[2].isdigit():
   solve(alg_name=sys.argv[1], in_num=int(sys.argv[2]))
