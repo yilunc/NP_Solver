@@ -1,4 +1,4 @@
-import os, random
+import os, random, math
 
 def parse_instance(file_path):
   horses = []
@@ -59,6 +59,12 @@ class Path:
     def currHorse(self):
         return self.path[-1]
 
+    def relayScore(self):
+        numHorses = int(math.ceil((self.weight % 1)*1000))
+        weight = int(self.weight)
+        return weight * numHorses
+
+
 # Change this to be random
 def chooseHorse(incoming_edges, outgoing_edges):
     maxHorse = 0
@@ -71,7 +77,11 @@ def chooseHorse(incoming_edges, outgoing_edges):
 
 def updateOutgoingEdges(outgoing_edges, best_solution):
     for e in best_solution:
+        print("horse " + str(e) + " was deleted.")
         del outgoing_edges[e]
+        for horse in outgoing_edges:
+            if e in outgoing_edges[horse]:
+                outgoing_edges[horse].remove(e)
     return outgoing_edges
 
 
@@ -97,7 +107,6 @@ def solve_instance_BFS_Greedy(instance):
                 outgoing_edges[h].append(i)
 
     solution = []
-    # CURRENTLY DOES NOT ACCOUNT FOR CYCLES!!!!!!!
     while (len(outgoing_edges) > 0):
         # Find the best path
         horse = chooseHorse(incoming_edges, outgoing_edges)
@@ -105,8 +114,10 @@ def solve_instance_BFS_Greedy(instance):
         initialPath.appendToPath(horse,horses)
         queue = Queue()
         queue.enqueue(initialPath)
+        print(initialPath.path)
         solutions = []
         while (not queue.isEmpty()):
+            print("Queue size is " + str(queue.size()))
             currPath = queue.dequeue()
             currHorse = currPath.currHorse()
             print("New Curr Horse is: " + str(currHorse))
@@ -114,19 +125,24 @@ def solve_instance_BFS_Greedy(instance):
                 solutions.append(currPath)
             else:
                 if currHorse in outgoing_edges:
-                    for horseFriends in outgoing_edges[currHorse]:
-                        path = currPath.spawnNewPath()
-                        path.appendToPath(horseFriends, horses)
-                        queue.enqueue(path)
+                    for horseFriend in outgoing_edges[currHorse]:
+                        #path = currPath.spawnNewPath()
+                        if horseFriend not in currPath.path and horseFriend in outgoing_edges:
+                            path = currPath.spawnNewPath()
+                            path.appendToPath(horseFriend, horses)
+                            queue.enqueue(path)
+                        else:
+                            if currPath not in solutions:
+                                solutions.append(currPath)
 
         best_solution = []
         bestWeight = -1
         for path in solutions:
-            # WE NEED TO CHANGE THIS TO ACCOUNT FOR PATH LENGTH AND WEIGHT
-            if path.weight > bestWeight:
-                bestWeight = path.weight
+            if path.relayScore() > bestWeight:
+                bestWeight = path.relayScore()
                 best_solution = path.path
-
+        print("Best Solution is: ")
+        print(best_solution)
         solution.append(tuple(best_solution))
         outgoing_edges = updateOutgoingEdges(outgoing_edges, best_solution)
     print(solution)
