@@ -1,4 +1,5 @@
 import os, random, math, copy
+from random import randint
 
 def parse_instance(file_path):
   horses = []
@@ -65,6 +66,85 @@ class Path:
         return weight * numHorses
 
 
+
+def chooseHorseDFS(outgoing_edges):
+    return None
+
+
+def updateOutgoingEdges(outgoing_edges, best_solution):
+    for e in best_solution:
+        #print("horse " + str(e) + " was deleted.")
+        del outgoing_edges[e]
+        for horse in outgoing_edges:
+            if e in outgoing_edges[horse]:
+                outgoing_edges[horse].remove(e)
+    return outgoing_edges
+
+
+def solve_instance_DFS_Greedy(instance):
+    adj = instance[0]
+    horses = instance[1]
+    best_solution = []
+    edges = []
+    # a dictionary with a horse as key, and an array of horses who have and edge pointing to that horse
+    incoming_edges = {}
+    # a dictionary with a horse as key, and an array of horses who this horse points to
+    outgoing_edges = {}
+    for h in adj:
+        incoming_edges[h] = []
+        outgoing_edges[h] = []
+    for h in adj:
+        for i in range(len(adj[h])):
+            if int(adj[h][i]) and h != i:
+                edges.append((h,i))
+                incoming_edges[i].append(h)
+                outgoing_edges[h].append(i)
+
+    finalRelayTeams = []
+    outgoing_edges_base = copy.deepcopy(outgoing_edges)
+    while (len(outgoing_edges) > 0):
+        # Add some randomness to this to run this three times? each time choosing a new random start part?
+        possibleSolutions = []
+        tryHowManyTimes = 5
+        while (tryHowManyTimes > 0):
+            # right now the chooseHorse is the simple way, so its basically running the same thing 5 times rn LOL
+            # got to implement chooseHorseDFS which chooses horse randomly and shit.
+            horse = chooseHorse(None,outgoing_edges)
+            initialPath = Path()
+            initialPath.appendToPath(horse, horses)
+            condition = True
+            while condition:
+                currHorse = initialPath.currHorse()
+                maxHorse = -1
+                maxWeight = -1
+                for e in outgoing_edges[currHorse]:
+                    if horses[e] > maxWeight and e not in initialPath.path:
+                        maxWeight, maxHorse = horses[e], e
+                if maxHorse != -1 and maxHorse not in initialPath.path:
+                    initialPath.appendToPath(maxHorse,horses)
+                else:
+                    possibleSolutions.append(initialPath)
+                    condition = False
+            tryHowManyTimes -= 1
+        # get the best overall path
+        best_solution = []
+        bestWeight = -1
+        for path in possibleSolutions:
+            if path.relayScore() > bestWeight:
+                bestWeight = path.relayScore()
+                best_solution = path.path
+
+        # append that to the final relay teams
+        finalRelayTeams.append(tuple(best_solution))
+        # delete those from the outgoin_edges
+        outgoing_edges_base = updateOutgoingEdges(outgoing_edges_base, best_solution)
+        outgoing_edges = copy.deepcopy(outgoing_edges_base)
+    #print(finalRelayTeams)
+    return finalRelayTeams
+
+
+
+
 # Change this to be random
 def chooseHorse(incoming_edges, outgoing_edges):
     maxHorse = 0
@@ -83,7 +163,6 @@ def updateOutgoingEdges(outgoing_edges, best_solution):
             if e in outgoing_edges[horse]:
                 outgoing_edges[horse].remove(e)
     return outgoing_edges
-
 
 def solve_instance_BFS_Greedy(instance):
     adj = instance[0]
@@ -138,9 +217,6 @@ def solve_instance_BFS_Greedy(instance):
                         for horse in outgoing_edges:
                             if horseFriend in outgoing_edges[horse]:
                                 outgoing_edges[horse].remove(horseFriend)
-                        # del outgoing_edges[horseFriend]
-                        # it essentially becomes a HUGE BFS through fucking everything since we are never removing any nodes once they add it to a path.
-                        # AGHHHH
                     else:
                         if currPath not in solutions:
                             solutions.append(currPath)
@@ -166,5 +242,7 @@ def solve():
     #         #instance = parse_instance("inputs/trivial.in")
     #         solution = solve_instance_BFS_Greedy(instance)
     #         write_solution(solution)
-    instance = parse_instance("inputs/1.in")
+    instance = parse_instance("inputs/3.in")
     solution = solve_instance_BFS_Greedy(instance)
+
+#solve()

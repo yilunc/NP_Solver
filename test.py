@@ -6,7 +6,7 @@ import gurik
 ALGORITHMS = {
               "yilun":  solve_yil.solve_instance,
               "gurik":  gurik.solver,
-              "tommy":  solve_tom.solve_instance_BFS_Greedy,
+              "tommy":  solve_tom.solve_instance_DFS_Greedy,
               "sidd" :  None,
               }
 
