@@ -107,6 +107,8 @@ def solve_instance_DFS_Greedy(instance):
         possibleSolutions = []
         tryHowManyTimes = 5
         while (tryHowManyTimes > 0):
+            # right now the chooseHorse is the simple way, so its basically running the same thing 5 times rn LOL
+            # got to implement chooseHorseDFS which chooses horse randomly and shit.
             horse = chooseHorse(None,outgoing_edges)
             initialPath = Path()
             initialPath.appendToPath(horse, horses)
@@ -137,7 +139,7 @@ def solve_instance_DFS_Greedy(instance):
         # delete those from the outgoin_edges
         outgoing_edges_base = updateOutgoingEdges(outgoing_edges_base, best_solution)
         outgoing_edges = copy.deepcopy(outgoing_edges_base)
-    print(finalRelayTeams)
+    #print(finalRelayTeams)
     return finalRelayTeams
 
 
