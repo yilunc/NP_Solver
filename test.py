@@ -97,6 +97,7 @@ def solve(alg_name=None, in_num=None):
         print ("\tScore: {0}".format(score))
       else:
         print "\033[91m INVALID SOLUTION"
+        return
 
 if (len(sys.argv) == 3) and sys.argv[2].isdigit():
   solve(alg_name=sys.argv[1], in_num=int(sys.argv[2]))
