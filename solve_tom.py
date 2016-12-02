@@ -1,30 +1,5 @@
-import os, random, math, copy
+import os, random, math, copy, heapq
 from random import randint
-
-def parse_instance(file_path):
-  horses = []
-  adj = {}
-  with open(file_path, 'rb') as f:
-    lines = f.readlines()
-    for i in range(len(lines)-1):
-      line = lines[i+1].split()
-      if len(line):
-        adj[i] = []
-        horses.append(line[i])
-        for j in range(len(line)):
-            if j != i:
-              adj[i].append(line[j])
-            else:
-              adj[i].append(-1)
-  return adj, horses
-
-def write_solution(solution):
-  with open('output', 'wb') as f:
-    for path in solution:
-      for horse in path[:-1]:
-        f.write("{0} ".format(horse))
-      f.write("{0}; ".format(path[-1]))
-    f.write("\n")
 
 class Queue:
     def __init__(self):
@@ -65,15 +40,59 @@ class Path:
         weight = int(self.weight)
         return weight * numHorses
 
+class PriorityQueue:
+    def __init__(self):
+        self._queue = []
+        self._index = 0
+
+    def push(self, item, priority):
+        heapq.heappush(self._queue, (-priority, self._index, item))
+        self._index += 1
+
+    def pop(self):
+        return heapq.heappop(self._queue)[-1]
+
+    def size(self):
+        return len(self._queue)
 
 
-def chooseHorseDFS(outgoing_edges):
-    return None
+# GLOBAL VARIABLES
+topHowManyHorses = 20
+tryHowManyTimes = 20
+
+# Gets the top topHowManyHorses horses.
+def getTopHorses(outgoing_edges):
+    q = PriorityQueue()
+    for horse in outgoing_edges:
+        q.push(horse, len(outgoing_edges[horse]))
+    pledgeHorses = []
+    for i in range(0,topHowManyHorses):
+        if q.size() != 0:
+            pledgeHorses.append(q.pop())
+    return pledgeHorses
 
 
+# Naive way to choose a horse to start with.
+# Chooses the horse with the most outgoing edges.
+def chooseHorse(outgoing_edges):
+    maxHorse = 0
+    maxOutgoing = -1
+    for e in outgoing_edges:
+        if (len(outgoing_edges[e]) > maxOutgoing):
+            maxOutgoing = len(outgoing_edges[e])
+            maxHorse = e
+    return maxHorse
+
+# Randomly chooses a horse out of the top topHowManyHorses horses.
+def chooseHorseDFS(pledgeHorses):
+    randomHorseIndex = randint(0, len(pledgeHorses) - 1)
+    horse = pledgeHorses[randomHorseIndex]
+    return horse
+
+
+# Once a path is found, it deletes those horses so they can't be used again.
 def updateOutgoingEdges(outgoing_edges, best_solution):
     for e in best_solution:
-        #print("horse " + str(e) + " was deleted.")
         del outgoing_edges[e]
         for horse in outgoing_edges:
             if e in outgoing_edges[horse]:
@@ -103,13 +122,13 @@ def solve_instance_DFS_Greedy(instance):
     finalRelayTeams = []
     outgoing_edges_base = copy.deepcopy(outgoing_edges)
     while (len(outgoing_edges) > 0):
-        # Add some randomness to this to run this three times? each time choosing a new random start part?
         possibleSolutions = []
-        tryHowManyTimes = 5
-        while (tryHowManyTimes > 0):
-            # right now the chooseHorse is the simple way, so its basically running the same thing 5 times rn LOL
-            # got to implement chooseHorseDFS which chooses horse randomly and shit.
-            horse = chooseHorse(None,outgoing_edges)
+        pledgeHorses = getTopHorses(outgoing_edges)
+        for x in range(0, tryHowManyTimes):
+            # Mess around with this line to change the way you choose a horse.
+            #horse = chooseHorse(outgoing_edges)
+            horse = chooseHorseDFS(pledgeHorses)
+            print("Starting on horse " + str(horse))
             initialPath = Path()
             initialPath.appendToPath(horse, horses)
             condition = True
@@ -123,10 +142,11 @@ def solve_instance_DFS_Greedy(instance):
                 if maxHorse != -1 and maxHorse not in initialPath.path:
                     initialPath.appendToPath(maxHorse,horses)
                 else:
+                    print(initialPath.path)
                     possibleSolutions.append(initialPath)
                     condition = False
-            tryHowManyTimes -= 1
-        # get the best overall path
+
+        # Get the best overall path.
         best_solution = []
         bestWeight = -1
         for path in possibleSolutions:
@@ -134,36 +154,19 @@ def solve_instance_DFS_Greedy(instance):
                 bestWeight = path.relayScore()
                 best_solution = path.path
 
-        # append that to the final relay teams
+        # Append that to the final relay teams.
         finalRelayTeams.append(tuple(best_solution))
-        # delete those from the outgoin_edges
+        # Delete those from the outgoin_edges
         outgoing_edges_base = updateOutgoingEdges(outgoing_edges_base, best_solution)
         outgoing_edges = copy.deepcopy(outgoing_edges_base)
-    #print(finalRelayTeams)
+
     return finalRelayTeams
 
 
 
 
-# Change this to be random
-def chooseHorse(incoming_edges, outgoing_edges):
-    maxHorse = 0
-    maxOutgoing = -1
-    for e in outgoing_edges:
-        if (len(outgoing_edges[e]) > maxOutgoing):
-            maxOutgoing = len(outgoing_edges[e])
-            maxHorse = e
-    return maxHorse
 
-def updateOutgoingEdges(outgoing_edges, best_solution):
-    for e in best_solution:
-        #print("horse " + str(e) + " was deleted.")
-        del outgoing_edges[e]
-        for horse in outgoing_edges:
-            if e in outgoing_edges[horse]:
-                outgoing_edges[horse].remove(e)
-    return outgoing_edges
-
+# Deprecated
 def solve_instance_BFS_Greedy(instance):
     adj = instance[0]
     horses = instance[1]
@@ -235,6 +238,7 @@ def solve_instance_BFS_Greedy(instance):
     print("\t{0}".format(solution))
     return solution
 
+# Deprecated #
 def solve():
     # for file in os.listdir("inputs"):
     #     if file.endswith(".in"):
@@ -244,5 +248,3 @@ def solve():
     #         write_solution(solution)
     instance = parse_instance("inputs/3.in")
     solution = solve_instance_BFS_Greedy(instance)
-
-#solve()
