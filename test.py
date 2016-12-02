@@ -92,11 +92,13 @@ def solve(alg_name=None, in_num=None):
         score, avg_len = score_solution(solution, instances[instance])
         write_solution(solution)
         print ("\033[92m\tApproximation: {0}".format(solution)[:100] + "...")
+        print ("\tInput Size: {0}".format(len(instances[instance][1])))
         print ("\tAverage Team Size: {0}".format(avg_len))
         print ("\tBiggest Team Size: {0}".format(len(max(solution, key=len))))
         print ("\tScore: {0}".format(score))
       else:
         print "\033[91m INVALID SOLUTION"
+        return
 
 if (len(sys.argv) == 3) and sys.argv[2].isdigit():
   solve(alg_name=sys.argv[1], in_num=int(sys.argv[2]))
