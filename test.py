@@ -31,7 +31,7 @@ def write_solution(solution):
       f.write("{0}; ".format(path[-1]))
     f.write("\n")
 
-def is_valid(solution):
+def is_valid(solution, instance):
   seen = set()
   for team in solution:
     seen.add(team[0])
@@ -40,7 +40,7 @@ def is_valid(solution):
         return False
       else:
         seen.add(team[i+1])
-      if (adj[team[i]][team[i+1]]==0):
+      if (instance[0][team[i]][team[i+1]]==0):
         return False
   return True
 
@@ -88,11 +88,12 @@ def solve(alg_name=None, in_num=None):
     for alg in algorithms:
       print("\033[94m Solving on {0}.in on {1}'s algorithm... \033[1m \033[93m".format(instance, alg))
       solution = ALGORITHMS[alg](instances[instance])
-      if is_valid(solution):
+      if is_valid(solution, instances[instance]):
         score, avg_len = score_solution(solution, instances[instance])
         write_solution(solution)
         print ("\033[92m\tApproximation: {0}".format(solution)[:100] + "...")
         print ("\tAverage Team Size: {0}".format(avg_len))
+        print ("\tBiggest Team Size: {0}".format(max(solution, key=len)))
         print ("\tScore: {0}".format(score))
       else:
         print "\033[91m INVALID SOLUTION"
