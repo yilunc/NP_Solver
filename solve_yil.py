@@ -121,11 +121,35 @@ class Graph():
       self.edges.append((self.get_node_dict[outgoing], node))
       self.get_node_dict[outgoing].add_to_incoming(node)
 
+  def _add_nodes(self, node1, node2):
+    self.nodes.append(node1)
+    self.nodes.append(node2)
+    self.get_node_dict[node1.num] = node1
+    self.get_node_dict[node2.num] = node2
+    for incoming in node1.incoming:
+      self.edges.append((self.get_node_dict[incoming], node1))
+      self.get_node_dict[incoming].add_to_outgoing(node1)
+    for outgoing in node1.outgoing:
+      self.edges.append((self.get_node_dict[outgoing], node1))
+      self.get_node_dict[outgoing].add_to_incoming(node1)
+
+    for incoming in node2.incoming:
+      self.edges.append((self.get_node_dict[incoming], node2))
+      self.get_node_dict[incoming].add_to_outgoing(node2)
+    for outgoing in node2.outgoing:
+      self.edges.append((self.get_node_dict[outgoing], node2))
+      self.get_node_dict[outgoing].add_to_incoming(node2)
+
   def compress(self, node1, node2):
     self._remove_node(node1)
     self._remove_node(node2)
     self._add_node(CompressedNode(node1, node2))
     self.num_compressed_nodes += 1
+
+  def decompress(self, node):
+    self._remove_node(node)
+    self._add_nodes(node.node1, node.node2)
+    self.num_compressed_nodes -= 1
 
   def has_compressed_node(self):
     return self.num_compressed_nodes > 0
@@ -150,6 +174,14 @@ def get_edge_data(instance):
           "incoming_edges": incoming_edges,
           "outgoing_edges": outgoing_edges
           }
+
+def can_add(edge, path):
+  return len(path) == 0 or path[0] == -1 or path[-1] == edge[0]
+
+def add_edge_to_path(edge, path):
+  if not can_add(edge, path):
+    return False
+  path.append(edge[1].num)
 
 def solve_instance(instance):
   adj = instance[0]
@@ -185,13 +217,26 @@ def solve_instance(instance):
 
   #Solve the instance
   print "\t\t Solving.."
-  solution = []
+  solution = [[-1,]]
   for subgraph in connected_subgraphs:
     print "\t\t Compressing Subgraph.."
     while len(subgraph) > 2:
       edge = subgraph.edges[int(random.random()*len(subgraph.edges))]
       subgraph.compress(edge[0], edge[1])
     print "\t\t Expanding Compressed Nodes"
-    while subgraph.has_compressed_node:
-      subgraph.compress(edge[0], edge[1])
-  return best_solution
+    while subgraph.has_compressed_node():
+      edge = subgraph.edges[int(random.random()*len(subgraph.edges))]
+      available_paths = []
+      for path in solution:
+        if can_add(edge, path):
+          available_paths.append(path)
+      if len(available_paths):
+        solution.append([-1,])
+        add_edge_to_path(edge, solution[-1])
+      add_edge_to_path(edge, max(available_paths, key=len))
+      for node in subgraph.nodes:
+        if isinstance(node, CompressedNode):
+          subgraph.decompress(node)
+          break
+
+  return solution

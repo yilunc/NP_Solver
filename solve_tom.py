@@ -194,7 +194,7 @@ def solve_instance_BFS_Greedy(instance):
         queue.enqueue(initialPath)
         #print(initialPath.path)
         solutions = []
-        print("outgoing edges is of size " + str(len(outgoing_edges)))
+        print("\toutgoing edges is of size " + str(len(outgoing_edges)))
         while (not queue.isEmpty()):
             #print("Queue size is " + str(queue.size()))
 
@@ -225,12 +225,12 @@ def solve_instance_BFS_Greedy(instance):
             if path.relayScore() > bestWeight:
                 bestWeight = path.relayScore()
                 best_solution = path.path
-        print("Best Solution is: ")
-        print(best_solution)
+        print("\tBest Solution is: ")
+        print("\t{0}".format(best_solution))
         solution.append(tuple(best_solution))
         outgoing_edges_base = updateOutgoingEdges(outgoing_edges_base, best_solution)
         outgoing_edges = copy.deepcopy(outgoing_edges_base)
-    print(solution)
+    print("\t{0}".format(solution))
     return solution
 
 def solve():
