@@ -1,6 +1,23 @@
-import random
+import os, random, Queue
 import heapq
 
+def parse_instance(file_path):
+  horses = []
+  adj = {}
+  already_ran = set()
+  with open(file_path, 'rb') as f:
+    lines = f.readlines()
+    for i in range(len(lines)-1):
+      line = lines[i+1].split()
+      if len(line):
+        adj[i] = []
+        horses.append(line[i])
+        for j in range(len(line)):
+            if j != i:
+              adj[i].append(line[j])
+            else:
+              adj[i].append(-1)
+  return adj, horses
 
 class PriorityQueue:
     def __init__(self):
@@ -30,6 +47,7 @@ def solver(instance):
     lst = []
     final = []
     pq = PriorityQueue()
+    cant = {}
     for i in range(0,len(horses)):
         pq.push(i, priority=int(horses[i]))
     while not pq.empty():
@@ -38,14 +56,20 @@ def solver(instance):
         current_friend = None
         friend_score = -1
         temp = adj[current_best]
-        for i in range(0,500):
+        for i in range(0,len(horses)):
             if temp[i] == '1' and horses[i] > friend_score and i not in used:
-                current_friend = i
+                    if current_best in cant and cant[current_best] == i:
+                        continue
+                    else:
+                        current_friend = i
         if current_friend != None:
             used.add(current_friend)
+            cant[current_friend] = current_best
+
         found = False
         if lst == []:
             lst += [[current_best,current_friend]]
+            found = True
         else:
             for i in range(0, len(lst)):
                 if lst[i][0] == current_friend and not found:
@@ -56,6 +80,8 @@ def solver(instance):
                     found = True
         if not found:
             lst += [[current_best,current_friend]]
+    double_check = [True]*len(lst)
+
     for i in range(0,len(lst)):
         for j in range(0,len(lst)):
             if i == j:
@@ -65,20 +91,48 @@ def solver(instance):
                 final += [temp]
                 used2.add(i)
                 used2.add(j)
+                double_check[i]=False
+                double_check[j]=False
             elif lst[j][0] == lst[i][len(lst[i])-1] and i not in used2 and j not in used2:
                 temp = lst[i] + lst[j][1:]
                 final += [temp]
                 used2.add(i)
                 used2.add(j)
+                double_check[i]=False
+                double_check[j]=False
+    for i in range(0,len(lst)):
+        if double_check[i]:
+            final += [lst[i]]
     finalscore = 0
     len_sum = 0
-    for path in final:
-        len_sum += len(path)
+    for element in final:
+        len_sum += len(element)
         score = 0
-        for i in range(len(path)):
-            if path[i] != None:
-                score += int(horses[path[i]])
-        finalscore += score * len(path)
+        for i in range(0,len(element)):
+            if element[i] != None:
+                score += int(horses[element[i]])
+        finalscore += score * len(element)
+    # print "\tBEFORE COMPRESS: " + str(len(lst))
+    # print "\tAFTER COMPRESS: " + str(len(final))
+    # print "\tTEAMS" 
+    # print final
+    # print "\tSCORE: " + str(finalscore)
+    # print "\tAVERAGE TEAM SIZE: " + str(len_sum/len(final))
+    def valid(teams):
+        seen = set()
+        for team in teams:
+            seen.add(team[0])
+            for i in range(0,len(team)-2):
+                if team[i+1] in seen:
+                    print "INVALID"
+                else:
+                    seen.add(team[i+1])
+                if (adj[team[i]][team[i+1]]==0):
+                    print "INVALID"
+        print "VALID"            
+    print valid(final)
+
+# solver()
 
     print "\tBEFORE COMPRESS: " + str(len(lst))
     print "\tAFTER COMPRESS: " + str(len(final))
