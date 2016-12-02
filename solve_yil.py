@@ -62,7 +62,6 @@ class CompressedNode(Node):
 class Graph():
   def __init__(self, nodes):
     self.nodes = nodes
-    self.get_node_dict = self._parse_nodes(nodes)
     self.edges = self._get_edges(nodes)
     self.edge_map = {}
     self.num_compressed_nodes = 0
@@ -121,22 +120,22 @@ class Graph():
     self.get_node_dict[node.num] = node
 
     for incoming in node.incoming1:
-      self.edge_map[(self.get_node_dict[incoming], node.num)] = (incoming, node.node1.num)
+      self.edge_map[(self.get_node_dict[incoming].num, node.num)] = (incoming, node.node1)
       self.edges.append((self.get_node_dict[incoming], node))
       self.get_node_dict[incoming].add_to_outgoing(node)
 
     for incoming in node.incoming2:
-      self.edge_map[(self.get_node_dict[incoming], node.num)] = (incoming, node.node2.num)
+      self.edge_map[(self.get_node_dict[incoming].num, node.num)] = (incoming, node.node2)
       self.edges.append((self.get_node_dict[incoming], node))
       self.get_node_dict[incoming].add_to_outgoing(node)
 
     for outgoing in node.outgoing1:
-      self.edge_map[(node.num, self.get_node_dict[outgoing])] = (node.node1.num, outgoing)
+      self.edge_map[(node.num, self.get_node_dict[outgoing].num)] = (node.node1, outgoing)
       self.edges.append((node, self.get_node_dict[outgoing]))
       self.get_node_dict[outgoing].add_to_incoming(node)
 
     for outgoing in node.outgoing2:
-      self.edge_map[(node.num, self.get_node_dict[outgoing])] = (node.node2.num, outgoing)
+      self.edge_map[(node.num, self.get_node_dict[outgoing].num)] = (node.node2, outgoing)
       self.edges.append((node, self.get_node_dict[outgoing]))
       self.get_node_dict[outgoing].add_to_incoming(node)
 
@@ -248,13 +247,11 @@ def solve_instance(instance):
       edge = subgraph.edges[int(random.random()*len(subgraph.edges))]
       cnode = subgraph.compress(edge[0], edge[1])
       compression_order.append(cnode)
-    print subgraph
     print "\t\t Expanding Compressed Nodes"
     for edge in subgraph.edges:
-      o_edge = subgraph.edge_map[edge]
+      o_edge = subgraph.edge_map[(edge[0].num, edge[1].num)]
       while not isinstance(o_edge[0], int) and not isinstance(o_edge[1], int):
-        print o_edge
-        o_edge = subgraph.edge_map[o_edge]
+        o_edge = subgraph.edge_map[(o_edge[0].num, o_edge[1].num)]
       solution.append([o_edge[0]])
     print solution
     while subgraph.has_compressed_node():
