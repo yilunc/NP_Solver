@@ -34,15 +34,16 @@ def write_solution(solution):
 def is_valid(solution, instance):
   seen = set()
   for team in solution:
+    if team[0] in seen:
+        return False, "Repeated Horse {0}".format(team[0])
     seen.add(team[0])
-    for i in range(0,len(team)-2):
+    for i in range(0,len(team)-1):
       if team[i+1] in seen:
-        return False
-      else:
-        seen.add(team[i+1])
+        return False, "Repeated Horse {0}".format(team[i+1])
       if (instance[0][team[i]][team[i+1]]==0):
-        return False
-  return True
+        return False, "Horse is not a friend"
+      seen.add(team[i+1])
+  return True, ""
 
 def parse_instance(file_path):
   horses = []
@@ -53,12 +54,14 @@ def parse_instance(file_path):
       line = lines[i+1].split()
       if len(line):
         adj[i] = []
-        horses.append(int(line[i]))
+        horses.append(line[i])
         for j in range(len(line)):
             if j != i:
-              adj[i].append(int(line[j]))
+              adj[i].append(line[j])
             else:
               adj[i].append(-1)
+  map(int, adj)
+  map(int, horses)
   return adj, horses
 
 def solve(alg_name=None, in_num=None):
@@ -86,18 +89,21 @@ def solve(alg_name=None, in_num=None):
 
   for instance in instance_nums:
     for alg in algorithms:
-      print("\033[94m Solving on {0}.in on {1}'s algorithm... \033[1m \033[93m".format(instance, alg))
+      print("\033[94mSolving on {0}.in on {1}'s algorithm... \033[1m \033[93m".format(instance, alg))
       solution = ALGORITHMS[alg](instances[instance])
-      if is_valid(solution, instances[instance]):
+      validity = is_valid(solution, instances[instance])
+      if validity[0]:
         score, avg_len = score_solution(solution, instances[instance])
         write_solution(solution)
         print ("\033[92m\tApproximation: {0}".format(solution)[:100] + "...")
         print ("\tInput Size: {0}".format(len(instances[instance][1])))
+        print ("\tNumber of Teams: {0}".format(len(solution)))
         print ("\tAverage Team Size: {0}".format(avg_len))
         print ("\tBiggest Team Size: {0}".format(len(max(solution, key=len))))
+        print ("\tSmallest Team Size: {0}".format(len(min(solution, key=len))))
         print ("\tScore: {0}".format(score))
       else:
-        print "\033[91m INVALID SOLUTION"
+        print "\033[91m INVALID SOLUTION, {0}: {1}".format(validity[1], solution)
         return
 
 if (len(sys.argv) == 3) and sys.argv[2].isdigit():
