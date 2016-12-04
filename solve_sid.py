@@ -205,24 +205,59 @@ def update_graph(vertices,edges,visited):
 
 	return vertices,edges
 
+#Stole this from Yilun's test.py
+def score_solution(solution, instance):
+  score = 0
+  len_sum = 0
+  for path in solution:
+    path_score = 0
+    for vertex_num in path:
+      if vertex_num is not None:
+        path_score += int(instance[1][vertex_num])
+    score += path_score*len(path)
+    len_sum += len(path)
+  avg_len = float(len_sum)/float(len(solution))
+  return score, avg_len
+
+
+def best_team(sets_of_teams, instance):
+	"""
+	Function to choose the best team from all the teams.
+	This is the function which is messing up
+	"""
+	maxTeamScore = 0
+	maxTeam = None
+	for team in sets_of_teams:
+		teamScore = score_solution(team, instance)[0]
+		if (teamScore > maxTeamScore):
+			maxTeamScore = teamScore
+			maxTeam = team
+	return maxTeam, maxTeamScore
+
+
 #Main
 def solve(instance):
-  adj, scores = instance
-  vertices, edges, scores = makeGraph(adj, scores)
-  scores = scores_to_int(scores)
-  visited = set()
-  teams = set()
-  #Graph is ready
+	adj, scores = instance
+	vertices, edges, scores = makeGraph(adj, scores)
+	scores = scores_to_int(scores)
+	visited = set()
+	teams = set()
+	#Graph is ready
 
-  while(len(vertices)>0):
-  	#Step I: Choose a random starting vertex
-  	start  = random.sample(vertices,1)[0]
-  	paths = construct_all_possible_paths(start, vertices, edges)
-  	best_path = choose_path_with_max_score(paths,scores)
-  	teams.add(best_path)
-  	visited = mark_as_visited(best_path,visited) # add all elements of best path
-  	vertices, edges = update_graph(vertices,edges,visited)
+	sets_of_teams = set()
+  	#bestTeamFucntion()
 
-  return teams
+	for start in vertices:
+	  while(len(vertices)>0):
+	  	#Step I: Choose a random starting vertex
+	  	# start  = random.sample(vertices,1)[0]
+	  	paths = construct_all_possible_paths(start, vertices, edges)
+	  	best_path = choose_path_with_max_score(paths,scores)
+	  	teams.add(best_path)
+	  	visited = mark_as_visited(best_path,visited) # add all elements of best path
+	  	vertices, edges = update_graph(vertices,edges,visited)
+	  sets_of_teams.add(teams)
+
+	return best_team(sets_of_teams)[0]
 
 
