@@ -32,6 +32,11 @@ def write_solution(solution):
       f.write("{0}; ".format(path[-1]))
     f.write("\n")
 
+def write_score(score):
+  with open('outputScore.out', 'a') as f:
+    f.write("{0}".format(score))
+    f.write("\n")
+
 def is_valid(solution, instance):
   seen = set()
   for team in solution:
@@ -94,6 +99,7 @@ def solve(alg_names=None, in_num=None):
       if validity[0]:
         score, avg_len = score_solution(solution, instances[instance])
         write_solution(solution)
+        write_score(score)
         print ("\033[92m\tApproximation: {0}".format(solution)[:100] + "...")
         print ("\tInput Size: {0}".format(len(instances[instance][1])))
         print ("\tNumber of Teams: {0}".format(len(solution)))

@@ -58,7 +58,7 @@ class PriorityQueue:
 
 # GLOBAL VARIABLES
 topHowManyHorses = 20
-tryHowManyTimes = 20
+tryHowManyTimes = 10
 
 # Gets the top topHowManyHorses horses.
 def getTopHorses(outgoing_edges):
