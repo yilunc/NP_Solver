@@ -55,14 +55,12 @@ def parse_instance(file_path):
       line = lines[i+1].split()
       if len(line):
         adj[i] = []
-        horses.append(line[i])
+        horses.append(int(line[i]))
         for j in range(len(line)):
             if j != i:
-              adj[i].append(line[j])
+              adj[i].append(int(line[j]))
             else:
               adj[i].append(-1)
-  map(int, adj)
-  map(int, horses)
   return adj, horses
 
 def solve(alg_names=None, in_num=None):

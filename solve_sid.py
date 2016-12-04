@@ -206,26 +206,6 @@ def update_graph(vertices,edges,visited):
 	return vertices,edges
 
 #Main
-<<<<<<< HEAD
-
-adj, scores = template.parse("cs170_final_inputs/1.in")
-vertices, edges, scores = makeGraph(adj, scores)
-scores = scores_to_int(scores)
-visited = set()
-teams = set()
-#Graph is ready
-
-while(len(vertices)>0):
-	#Step I: Choose a random starting vertex
-	start  = random.sample(vertices,1)[0]
-	paths = construct_all_possible_paths(start, vertices, edges)
-	best_path = choose_path_with_max_score(paths,scores)
-	teams.add(best_path)
-	visited = mark_as_visited(best_path,visited) # add all elements of best path
-	vertices, edges = update_graph(vertices,edges,visited)
-
-print "The best possible combination of teams is: ", teams
-=======
 def solve(instance):
   adj, scores = instance
   vertices, edges, scores = makeGraph(adj, scores)
@@ -244,6 +224,3 @@ def solve(instance):
   	vertices, edges = update_graph(vertices,edges,visited)
 
   return teams
-
-
->>>>>>> 471435eccc82bb61c152c50cb2081fe14ae2a3d5
