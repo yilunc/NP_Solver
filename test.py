@@ -1,4 +1,5 @@
 import sys, os
+import solve_sid
 import solve_yil
 import solve_tom
 import gurik
@@ -7,7 +8,7 @@ ALGORITHMS = {
               "yilun":  solve_yil.solve_instance,
               "gurik":  gurik.solver,
               "tommy":  solve_tom.solve_instance_DFS_Greedy,
-              "sidd" :  None,
+              "sid" :  solve_sid.solve,
               }
 
 def score_solution(solution, instance):
@@ -24,7 +25,7 @@ def score_solution(solution, instance):
   return score, avg_len
 
 def write_solution(solution):
-  with open('output', 'wb') as f:
+  with open('output.out', 'wb+') as f:
     for path in solution:
       for horse in path[:-1]:
         f.write("{0} ".format(horse))
@@ -64,13 +65,13 @@ def parse_instance(file_path):
   map(int, horses)
   return adj, horses
 
-def solve(alg_name=None, in_num=None):
+def solve(alg_names=None, in_num=None):
   instances = {}
   instance_nums = []
   algorithms = ALGORITHMS
 
-  if alg_name:
-    algorithms = [alg_name]
+  if alg_names:
+    algorithms = alg_names.split(",")
 
   if in_num:
     for file in os.listdir("cs170_final_inputs"):
@@ -107,11 +108,11 @@ def solve(alg_name=None, in_num=None):
         return
 
 if (len(sys.argv) == 3) and sys.argv[2].isdigit():
-  solve(alg_name=sys.argv[1], in_num=int(sys.argv[2]))
+  solve(alg_names=sys.argv[1], in_num=int(sys.argv[2]))
 elif (len(sys.argv) == 2) and sys.argv[1].isdigit():
   solve(in_num=int(sys.argv[1]))
 elif (len(sys.argv) == 2):
-  solve(alg_name=sys.argv[1])
+  solve(alg_names=sys.argv[1])
 elif (len(sys.argv) == 1):
   solve()
 else:
