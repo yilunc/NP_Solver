@@ -91,25 +91,33 @@ def solve(alg_names=None, in_num=None):
 
   instance_nums.sort()
 
+  runHowManyIterations = 5
   for instance in instance_nums:
     for alg in algorithms:
-      print("\033[94mSolving on {0}.in on {1}'s algorithm... \033[1m \033[93m".format(instance, alg))
-      solution = ALGORITHMS[alg](instances[instance])
-      validity = is_valid(solution, instances[instance])
-      if validity[0]:
-        score, avg_len = score_solution(solution, instances[instance])
-        write_solution(solution)
-        write_score(score)
-        print ("\033[92m\tApproximation: {0}".format(solution)[:100] + "...")
+        print("\033[94mSolving on {0}.in on {1}'s algorithm... \033[1m \033[93m".format(instance, alg))
+        bestSolution = None
+        bestScore = -1
+        bestAvgLen = -1
+        for z in range(0,runHowManyIterations):
+            solution = ALGORITHMS[alg](instances[instance])
+            validity = is_valid(solution, instances[instance])
+            if validity[0]:
+                score, avg_len = score_solution(solution, instances[instance])
+                if score > bestScore:
+                    bestScore, bestSolution, bestAvgLen = score, solution, avg_len
+            else:
+                print "\033[91m INVALID SOLUTION, {0}: {1}".format(validity[1], solution)
+                return
+        write_solution(bestSolution)
+        write_score(bestScore)
+        print ("\033[92m\tApproximation: {0}".format(bestSolution)[:100] + "...")
         print ("\tInput Size: {0}".format(len(instances[instance][1])))
-        print ("\tNumber of Teams: {0}".format(len(solution)))
-        print ("\tAverage Team Size: {0}".format(avg_len))
-        print ("\tBiggest Team Size: {0}".format(len(max(solution, key=len))))
-        print ("\tSmallest Team Size: {0}".format(len(min(solution, key=len))))
-        print ("\tScore: {0}".format(score))
-      else:
-        print "\033[91m INVALID SOLUTION, {0}: {1}".format(validity[1], solution)
-        return
+        print ("\tNumber of Teams: {0}".format(len(bestSolution)))
+        print ("\tAverage Team Size: {0}".format(bestAvgLen))
+        print ("\tBiggest Team Size: {0}".format(len(max(bestSolution, key=len))))
+        print ("\tSmallest Team Size: {0}".format(len(min(bestSolution, key=len))))
+        print ("\tScore: {0}".format(bestScore))
+
 
 if (len(sys.argv) == 3) and sys.argv[2].isdigit():
   solve(alg_names=sys.argv[1], in_num=int(sys.argv[2]))
