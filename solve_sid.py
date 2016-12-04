@@ -279,4 +279,3 @@ def solve(instance):
 	# print "ALL TEAMS: ", sets_of_teams  								
 	# print "BEST TEAM: ", best_team(sets_of_teams)[0], " SCORE: ", best_team(sets_of_teams)[1]			
 	return best_team(sets_of_teams)[0]
->>>>>>> sid
