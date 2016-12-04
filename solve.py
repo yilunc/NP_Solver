@@ -24,8 +24,8 @@ def score_solution(solution, instance):
   avg_len = float(len_sum)/float(len(solution))
   return score, avg_len
 
-def write_solution(solution):
-  with open('output.out', 'a') as f:
+def write_solution(alg, solution):
+  with open('{0}-output.out'.format(alg), 'a') as f:
     for path in solution:
       for horse in path[:-1]:
         f.write("{0} ".format(horse))
@@ -68,7 +68,7 @@ def parse_instance(file_path):
               adj[i].append(-1)
   return adj, horses
 
-def solve(alg_names=None, in_num=None, out=True):
+def solve(alg_names=None, in_num=None):
   instances = {}
   instance_nums = []
   algorithms = ALGORITHMS
@@ -108,9 +108,8 @@ def solve(alg_names=None, in_num=None, out=True):
             else:
                 print "\033[91m INVALID SOLUTION, {0}: {1}".format(validity[1], solution)
                 return
-        if out:
-          write_solution(bestSolution)
-          write_score(alg, instance, bestScore)
+        write_solution(alg, bestSolution)
+        write_score(alg, instance, bestScore)
         print ("\033[92m\tApproximation: {0}".format(bestSolution)[:100] + "...")
         print ("\tInput Size: {0}".format(len(instances[instance][1])))
         print ("\tNumber of Teams: {0}".format(len(bestSolution)))
@@ -119,23 +118,7 @@ def solve(alg_names=None, in_num=None, out=True):
         print ("\tSmallest Team Size: {0}".format(len(min(bestSolution, key=len))))
         print ("\tScore: {0}".format(bestScore))
 
-
-out=True
-comp=False
-if "q" in sys.argv:
-  sys.argv.remove("q")
-  out=False
-if "c" in sys.argv:
-  sys.argv.remove("c")
-  comp=True
-
-if (len(sys.argv) == 3) and sys.argv[2].isdigit():
-  solve(alg_names=sys.argv[1], in_num=int(sys.argv[2]), out=out)
-elif (len(sys.argv) == 2) and sys.argv[1].isdigit():
-  solve(in_num=int(sys.argv[1]), out=out)
-elif (len(sys.argv) == 2):
-  solve(alg_names=sys.argv[1], out=out)
-elif (len(sys.argv) == 1):
-  solve()
+if (len(sys.argv) == 2):
+  solve(alg_names=sys.argv[1])
 else:
   print("ERROR: invalid argument(s).")

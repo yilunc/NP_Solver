@@ -237,25 +237,21 @@ def best_team(sets_of_teams, instance):
 
 #Main
 def solve(instance):
-	adj, scores = instance
-	vertices, edges, scores = makeGraph(adj, scores)
-	scores = scores_to_int(scores)
-	visited = set()
-	teams = set()
-	#Graph is ready
-
-	sets_of_teams = set()
-  	#bestTeamFucntion()
-
-	for start in vertices:
-	  while(len(vertices)>0):
-	  	#Step I: Choose a random starting vertex
-	  	# start  = random.sample(vertices,1)[0]
-	  	paths = construct_all_possible_paths(start, vertices, edges)
-	  	best_path = choose_path_with_max_score(paths,scores)
-	  	teams.add(best_path)
-	  	visited = mark_as_visited(best_path,visited) # add all elements of best path
-	  	vertices, edges = update_graph(vertices,edges,visited)
-	  sets_of_teams.add(teams)
-
-	return best_team(sets_of_teams)[0]
+  adj, scores = instance
+  vertices, edges, scores = makeGraph(adj, scores)
+  scores = scores_to_int(scores)
+  visited = set()
+  teams = set()
+  #Graph is ready
+  sets_of_teams = set()
+  while(len(vertices) > 0):
+    for start in vertices:
+      #Step I: Choose a random starting vertex
+      # start  = random.sample(vertices,1)[0]
+      paths = construct_all_possible_paths(start, vertices, edges)
+      best_path = choose_path_with_max_score(paths,scores)
+      teams.add(best_path)
+    visited = mark_as_visited(best_path,visited) # add all elements of best path
+    vertices, edges = update_graph(vertices,edges,visited)
+    sets_of_teams.add(teams)
+  return best_team(sets_of_teams)[0]
