@@ -8,7 +8,7 @@ ALGORITHMS = {
               "yilun":  solve_yil.solve_instance,
               "gurik":  gurik.solver,
               "tommy":  solve_tom.solve_instance_DFS_Greedy,
-              "sidd" :  solve_sid.solve,
+              "sid" :  solve_sid.solve,
               }
 
 def score_solution(solution, instance):
@@ -25,7 +25,7 @@ def score_solution(solution, instance):
   return score, avg_len
 
 def write_solution(solution):
-  with open('output.out', 'wb') as f:
+  with open('output.out', 'wb+') as f:
     for path in solution:
       for horse in path[:-1]:
         f.write("{0} ".format(horse))
