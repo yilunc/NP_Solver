@@ -25,7 +25,7 @@ def score_solution(solution, instance):
   return score, avg_len
 
 def write_solution(solution):
-  with open('output.out', 'wb+') as f:
+  with open('output.out', 'a') as f:
     for path in solution:
       for horse in path[:-1]:
         f.write("{0} ".format(horse))
