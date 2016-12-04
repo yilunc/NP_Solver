@@ -143,7 +143,8 @@ def choose_path_with_max_score(paths, scores):
 		path_score = 0
 		for h in path:
 			path_score += scores[h]
-		paths_to_scores[path] = path_score
+
+		paths_to_scores[path] = path_score * len(path) #tom sugg
 
 	max_path = None
 	max_score = 0
@@ -203,6 +204,8 @@ def update_graph(vertices,edges,visited):
 			edges.remove(edge)
 
 	return vertices,edges
+
+#Main
 
 adj, scores = template.parse("sample1.in")
 vertices, edges, scores = makeGraph(adj, scores)
