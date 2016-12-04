@@ -259,5 +259,3 @@ def solve(instance):
 	  sets_of_teams.add(teams)
 
 	return best_team(sets_of_teams)[0]
-
-
