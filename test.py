@@ -6,19 +6,22 @@ import gurik
 ALGORITHMS = {
               "yilun":  solve_yil.solve_instance,
               "gurik":  gurik.solver,
-              "tommy":  solve_tom.solve_instance_BFS_Greedy,
+              "tommy":  solve_tom.solve_instance_DFS_Greedy,
               "sidd" :  None,
               }
 
 def score_solution(solution, instance):
   score = 0
+  len_sum = 0
   for path in solution:
     path_score = 0
     for vertex_num in path:
       if vertex_num is not None:
         path_score += int(instance[1][vertex_num])
     score += path_score*len(path)
-  return score
+    len_sum += len(path)
+  avg_len = float(len_sum)/float(len(solution))
+  return score, avg_len
 
 def write_solution(solution):
   with open('output', 'wb') as f:
@@ -27,6 +30,20 @@ def write_solution(solution):
         f.write("{0} ".format(horse))
       f.write("{0}; ".format(path[-1]))
     f.write("\n")
+
+def is_valid(solution, instance):
+  seen = set()
+  for team in solution:
+    if team[0] in seen:
+        return False, "Repeated Horse {0}".format(team[0])
+    seen.add(team[0])
+    for i in range(0,len(team)-1):
+      if team[i+1] in seen:
+        return False, "Repeated Horse {0}".format(team[i+1])
+      if (instance[0][team[i]][team[i+1]]==0):
+        return False, "Horse is not a friend"
+      seen.add(team[i+1])
+  return True, ""
 
 def parse_instance(file_path):
   horses = []
@@ -43,6 +60,8 @@ def parse_instance(file_path):
               adj[i].append(line[j])
             else:
               adj[i].append(-1)
+  map(int, adj)
+  map(int, horses)
   return adj, horses
 
 def solve(alg_name=None, in_num=None):
@@ -70,11 +89,22 @@ def solve(alg_name=None, in_num=None):
 
   for instance in instance_nums:
     for alg in algorithms:
-      print("Solving on {0}.in on {1}'s algorithm...".format(instance, alg))
+      print("\033[94mSolving on {0}.in on {1}'s algorithm... \033[1m \033[93m".format(instance, alg))
       solution = ALGORITHMS[alg](instances[instance])
-      write_solution(solution)
-      print ("\tApproximation: {0}".format(solution))
-      print ("\tScore: {0}".format(score_solution(solution, instances[instance])))
+      validity = is_valid(solution, instances[instance])
+      if validity[0]:
+        score, avg_len = score_solution(solution, instances[instance])
+        write_solution(solution)
+        print ("\033[92m\tApproximation: {0}".format(solution)[:100] + "...")
+        print ("\tInput Size: {0}".format(len(instances[instance][1])))
+        print ("\tNumber of Teams: {0}".format(len(solution)))
+        print ("\tAverage Team Size: {0}".format(avg_len))
+        print ("\tBiggest Team Size: {0}".format(len(max(solution, key=len))))
+        print ("\tSmallest Team Size: {0}".format(len(min(solution, key=len))))
+        print ("\tScore: {0}".format(score))
+      else:
+        print "\033[91m INVALID SOLUTION, {0}: {1}".format(validity[1], solution)
+        return
 
 if (len(sys.argv) == 3) and sys.argv[2].isdigit():
   solve(alg_name=sys.argv[1], in_num=int(sys.argv[2]))
