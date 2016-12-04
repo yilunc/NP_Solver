@@ -236,7 +236,7 @@ def solve(instance):
   	o_vertices = vertices.copy()
   	o_edges = edges.copy()
 	for start in o_vertices:
-		print "Start Vertice: ", start
+		# print "Start Vertice: ", start
 		visited = set()
 		# teams = set()
 		edges = o_edges.copy()
