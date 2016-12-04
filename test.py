@@ -32,9 +32,9 @@ def write_solution(solution):
       f.write("{0}; ".format(path[-1]))
     f.write("\n")
 
-def write_score(score):
+def write_score(name, in_num, score):
   with open('outputScore.out', 'a') as f:
-    f.write("{0}".format(score))
+    f.write("{0} {1}: {2}".format(name, in_num, score))
     f.write("\n")
 
 def is_valid(solution, instance):
@@ -109,7 +109,7 @@ def solve(alg_names=None, in_num=None):
                 print "\033[91m INVALID SOLUTION, {0}: {1}".format(validity[1], solution)
                 return
         write_solution(bestSolution)
-        write_score(bestScore)
+        write_score(alg, instance, bestScore)
         print ("\033[92m\tApproximation: {0}".format(bestSolution)[:100] + "...")
         print ("\tInput Size: {0}".format(len(instances[instance][1])))
         print ("\tNumber of Teams: {0}".format(len(bestSolution)))
