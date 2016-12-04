@@ -32,7 +32,7 @@ def makeGraph(adj, scores):
 					edge = (h1,h2)
 					edges.add(edge)
 			h2 += 1
-	
+
 	#SCORE_DICTIONARY
 	scoreDict = dict()
 	for v in vertices:
@@ -61,7 +61,7 @@ def recurseThroughGraph(parent_vertice, vertices,edges,scores, visited):
 			recurseThroughGraph(child,vertices,edges,scores,visited)
 			# children.append(el[1])
 	return visited
-	
+
 	# print "Children: ",children
 
 def _children(currentNode,edges):
@@ -97,7 +97,7 @@ def construct_all_possible_paths(start, vertices, edges):
             vertices - a set of all the vertices in the graph
             edges -  a set of all the valid edges in the graph
     OUTPUT A set of all possible paths
-    
+
     Trivial
 
     >>> v = set([1,2,3,4])
@@ -125,11 +125,11 @@ def construct_all_possible_paths(start, vertices, edges):
 #Tested
 def choose_path_with_max_score(paths, scores):
 	"""
-	A function that takes in the set of all paths, assigns scores to the paths 
+	A function that takes in the set of all paths, assigns scores to the paths
 	and then chooses the path with the maximum score.
 	INPUT A set of all the possible paths
 	OUTPUT The path with the maximum score
-	
+
 	Doctests
 	>>> paths = [(1,2),(3,)]
 	>>> scores = {1 : 10, 2: 10, 3: 10}
@@ -161,7 +161,7 @@ def mark_as_visited(path,visited):
 	A function to take in the elements of a path and add them to the visited set
 	INPUT A path
 	OUTPUT Updated visited set
-	
+
 	>>> path = (1, 2)
 	>>> visited = set()
 	>>> mark_as_visited(path,visited)
@@ -199,30 +199,30 @@ def update_graph(vertices,edges,visited):
 		for edge in edges:
 			if(v in edge):
 				edges_to_remove.append(edge)
-		
+
 		for edge in edges_to_remove:
 			edges.remove(edge)
 
 	return vertices,edges
 
 #Main
+def solve(instance):
+  adj, scores = instance
+  vertices, edges, scores = makeGraph(adj, scores)
+  scores = scores_to_int(scores)
+  visited = set()
+  teams = set()
+  #Graph is ready
 
-adj, scores = template.parse("sample1.in")
-vertices, edges, scores = makeGraph(adj, scores)
-scores = scores_to_int(scores)
-visited = set()
-teams = set()
-#Graph is ready
+  while(len(vertices)>0):
+  	#Step I: Choose a random starting vertex
+  	start  = random.sample(vertices,1)[0]
+  	paths = construct_all_possible_paths(start, vertices, edges)
+  	best_path = choose_path_with_max_score(paths,scores)
+  	teams.add(best_path)
+  	visited = mark_as_visited(best_path,visited) # add all elements of best path
+  	vertices, edges = update_graph(vertices,edges,visited)
 
-while(len(vertices)>0):
-	#Step I: Choose a random starting vertex
-	start  = random.sample(vertices,1)[0]
-	paths = construct_all_possible_paths(start, vertices, edges)
-	best_path = choose_path_with_max_score(paths,scores)
-	teams.add(best_path)
-	visited = mark_as_visited(best_path,visited) # add all elements of best path
-	vertices, edges = update_graph(vertices,edges,visited)
-
-print "The best possible combination of teams is: ", teams
+  return teams
 
 
