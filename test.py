@@ -112,7 +112,7 @@ if (len(sys.argv) == 3) and sys.argv[2].isdigit():
 elif (len(sys.argv) == 2) and sys.argv[1].isdigit():
   solve(in_num=int(sys.argv[1]))
 elif (len(sys.argv) == 2):
-  solve(alg_name=sys.argv[1])
+  solve(alg_names=sys.argv[1])
 elif (len(sys.argv) == 1):
   solve()
 else:
