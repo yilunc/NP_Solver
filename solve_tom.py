@@ -128,7 +128,7 @@ def solve_instance_DFS_Greedy(instance):
             # Mess around with this line to change the way you choose a horse.
             #horse = chooseHorse(outgoing_edges)
             horse = chooseHorseDFS(pledgeHorses)
-            print("Starting on horse " + str(horse))
+            #print("Starting on horse " + str(horse))
             initialPath = Path()
             initialPath.appendToPath(horse, horses)
             condition = True
@@ -137,12 +137,13 @@ def solve_instance_DFS_Greedy(instance):
                 maxHorse = -1
                 maxWeight = -1
                 for e in outgoing_edges[currHorse]:
+                    print(type(horses[e]))
                     if horses[e] > maxWeight and e not in initialPath.path:
                         maxWeight, maxHorse = horses[e], e
                 if maxHorse != -1 and maxHorse not in initialPath.path:
                     initialPath.appendToPath(maxHorse,horses)
                 else:
-                    print(initialPath.path)
+                    #print(initialPath.path)
                     possibleSolutions.append(initialPath)
                     condition = False
 
@@ -159,7 +160,6 @@ def solve_instance_DFS_Greedy(instance):
         # Delete those from the outgoin_edges
         outgoing_edges_base = updateOutgoingEdges(outgoing_edges_base, best_solution)
         outgoing_edges = copy.deepcopy(outgoing_edges_base)
-
     return finalRelayTeams
 
 
