@@ -24,6 +24,9 @@ def score_solution(solution, instance):
   avg_len = float(len_sum)/float(len(solution))
   return score, avg_len
 
+def clear_output(alg):
+  with open('{0}-output.out'.format(alg), 'w') as f: pass
+
 def write_solution(alg, solution):
   with open('{0}-output.out'.format(alg), 'a') as f:
     for path in solution:
@@ -68,57 +71,47 @@ def parse_instance(file_path):
               adj[i].append(-1)
   return adj, horses
 
-def solve(alg_names=None, in_num=None):
+def solve(alg):
   instances = {}
   instance_nums = []
   algorithms = ALGORITHMS
+  clear_output(alg)
 
-  if alg_names:
-    algorithms = alg_names.split(",")
-
-  if in_num:
-    for file in os.listdir("cs170_final_inputs"):
-      if str(file) == "{0}.in".format(in_num):
-        print("Parsing {0}.in ...".format(in_num))
-        instances[in_num] = (parse_instance("cs170_final_inputs/{0}".format(str(file))))
-        instance_nums.append(in_num)
-  else:
-    for file in os.listdir("cs170_final_inputs"):
-      if file.endswith(".in"):
-        print("Parsing {0} ... ".format(file))
-        instances[int(file.split('.')[0])] = parse_instance("cs170_final_inputs/{0}".format(str(file)))
-        instance_nums.append(int(file.split('.')[0]))
+  for file in os.listdir("cs170_final_inputs"):
+    if file.endswith(".in"):
+      print("Parsing {0} ... ".format(file))
+      instances[int(file.split('.')[0])] = parse_instance("cs170_final_inputs/{0}".format(str(file)))
+      instance_nums.append(int(file.split('.')[0]))
 
   instance_nums.sort()
 
   runHowManyIterations = 1
   for instance in instance_nums:
-    for alg in algorithms:
-        print("\033[94mSolving on {0}.in on {1}'s algorithm... \033[1m \033[93m".format(instance, alg))
-        bestSolution = None
-        bestScore = -1
-        bestAvgLen = -1
-        for z in range(0,runHowManyIterations):
-            solution = ALGORITHMS[alg](instances[instance])
-            validity = is_valid(solution, instances[instance])
-            if validity[0]:
-                score, avg_len = score_solution(solution, instances[instance])
-                if score > bestScore:
-                    bestScore, bestSolution, bestAvgLen = score, solution, avg_len
-            else:
-                print "\033[91m INVALID SOLUTION, {0}: {1}".format(validity[1], solution)
-                return
-        write_solution(alg, bestSolution)
-        write_score(alg, instance, bestScore)
-        print ("\033[92m\tApproximation: {0}".format(bestSolution)[:100] + "...")
-        print ("\tInput Size: {0}".format(len(instances[instance][1])))
-        print ("\tNumber of Teams: {0}".format(len(bestSolution)))
-        print ("\tAverage Team Size: {0}".format(bestAvgLen))
-        print ("\tBiggest Team Size: {0}".format(len(max(bestSolution, key=len))))
-        print ("\tSmallest Team Size: {0}".format(len(min(bestSolution, key=len))))
-        print ("\tScore: {0}".format(bestScore))
+    print("\033[94mSolving on {0}.in on {1}'s algorithm... \033[1m \033[93m".format(instance, alg))
+    bestSolution = None
+    bestScore = -1
+    bestAvgLen = -1
+    for z in range(0,runHowManyIterations):
+        solution = ALGORITHMS[alg](instances[instance])
+        validity = is_valid(solution, instances[instance])
+        if validity[0]:
+            score, avg_len = score_solution(solution, instances[instance])
+            if score > bestScore:
+                bestScore, bestSolution, bestAvgLen = score, solution, avg_len
+        else:
+            print "\033[91m INVALID SOLUTION, {0}: {1}".format(validity[1], solution)
+            return
+    write_solution(alg, bestSolution)
+    write_score(alg, instance, bestScore)
+    print ("\033[92m\tApproximation: {0}".format(bestSolution)[:100] + "...")
+    print ("\tInput Size: {0}".format(len(instances[instance][1])))
+    print ("\tNumber of Teams: {0}".format(len(bestSolution)))
+    print ("\tAverage Team Size: {0}".format(bestAvgLen))
+    print ("\tBiggest Team Size: {0}".format(len(max(bestSolution, key=len))))
+    print ("\tSmallest Team Size: {0}".format(len(min(bestSolution, key=len))))
+    print ("\tScore: {0}".format(bestScore))
 
 if (len(sys.argv) == 2):
-  solve(alg_names=sys.argv[1])
+  solve(sys.argv[1])
 else:
   print("ERROR: invalid argument(s).")

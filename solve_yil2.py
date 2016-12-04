@@ -286,20 +286,9 @@ def getTopHorses(outgoing_edges):
       pledgeHorses.append(q.pop())
     return pledgeHorses
 
-
-# Naive way to choose a horse to start with.
-# Chooses the horse with the most outgoing edges.
-def chooseHorse(outgoing_edges, num_random=0):
-    maxHorse = 0
-    maxOutgoing = -1
-    for e in outgoing_edges:
-        if (len(outgoing_edges[e]) > maxOutgoing):
-            maxOutgoing = len(outgoing_edges[e])
-            maxHorse = e
-    return maxHorse
-
 # Randomly chooses a horse out of the top topHowManyHorses horses.
-def chooseHorseDFS(pledgeHorses):
+def chooseHorseDFS(pledgeHorses, seen_horses):
+    pledgeHorses = list(set(pledgeHorses)-set(seen_horses))
     randomHorseIndex = randint(0, len(pledgeHorses) - 1)
     horse = pledgeHorses[randomHorseIndex]
     return horse
