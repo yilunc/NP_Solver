@@ -153,7 +153,7 @@ def choose_path_with_max_score(paths, scores):
 			max_score = paths_to_scores[el]
 			max_path = el
 
-	return max_path
+	return max_path, max_score
 
 #Tested
 def mark_as_visited(path,visited):
@@ -205,30 +205,17 @@ def update_graph(vertices,edges,visited):
 
 	return vertices,edges
 
-#Stole this from Yilun's test.py
-def score_solution(solution, instance):
-  score = 0
-  len_sum = 0
-  for path in solution:
-    path_score = 0
-    for vertex_num in path:
-      if vertex_num is not None:
-        path_score += int(instance[1][vertex_num])
-    score += path_score*len(path)
-    len_sum += len(path)
-  avg_len = float(len_sum)/float(len(solution))
-  return score, avg_len
 
-
-def best_team(sets_of_teams, instance):
+def best_team(sets_of_teams):
 	"""
 	Function to choose the best team from all the teams.
 	This is the function which is messing up
 	"""
 	maxTeamScore = 0
 	maxTeam = None
-	for team in sets_of_teams:
-		teamScore = score_solution(team, instance)[0]
+
+	for team in sets_of_teams.keys():
+		teamScore = sets_of_teams[team]
 		if (teamScore > maxTeamScore):
 			maxTeamScore = teamScore
 			maxTeam = team
@@ -237,21 +224,58 @@ def best_team(sets_of_teams, instance):
 
 #Main
 def solve(instance):
-  adj, scores = instance
-  vertices, edges, scores = makeGraph(adj, scores)
-  scores = scores_to_int(scores)
-  visited = set()
-  teams = set()
-  #Graph is ready
-  sets_of_teams = set()
-  while(len(vertices) > 0):
-    for start in vertices:
-      #Step I: Choose a random starting vertex
-      # start  = random.sample(vertices,1)[0]
-      paths = construct_all_possible_paths(start, vertices, edges)
-      best_path = choose_path_with_max_score(paths,scores)
-      teams.add(best_path)
-    visited = mark_as_visited(best_path,visited) # add all elements of best path
-    vertices, edges = update_graph(vertices,edges,visited)
-    sets_of_teams.add(teams)
-  return best_team(sets_of_teams)[0]
+
+	adj, scores = instance
+	vertices, edges, scores = makeGraph(adj, scores)
+	scores = scores_to_int(scores)
+	# visited = set()
+	teams = set()
+	#Graph is ready
+	teams_score = 0
+	sets_of_teams = dict()
+  	o_vertices = vertices.copy()
+  	o_edges = edges.copy()
+	for start in o_vertices:
+		# print "Start Vertice: ", start
+		visited = set()
+		# teams = set()
+		edges = o_edges.copy()
+		vertices = o_vertices.copy()
+		# teams_score = 0
+		while(len(vertices)>0):
+	  		#Step I: Choose a random starting vertex
+	  		# start  = random.sample(vertices,1)[0]
+	  		if(start in visited):
+	  			start = None
+	  			for v in vertices:
+	  				if (v not in visited):
+	  					v = start
+	  			if(start == None):
+	  				break
+	  		paths = construct_all_possible_paths(start, vertices, edges)
+	  		best_path, best_score = choose_path_with_max_score(paths,scores)
+	  		flag = True
+	  		for x in best_path:
+	  			for y in teams:
+	  				# print "X: ", x, " Y: ", y, " X in Y: ", x in y
+	  				if(x in y):
+	  					flag = False
+	  		if(flag == True):	
+	  			teams.add(best_path)
+	  			teams_score += best_score
+	  		visited = mark_as_visited(best_path,visited) # add all elements of best path
+	  		vertices, edges = update_graph(vertices,edges,visited)
+	  		# print "Path added: ", best_path
+	  		# # print "Score added: ", best_score
+	  		# print "Length of vertices: ", len(vertices)
+	  		# print "Visited: ", visited
+	  		# print "Does 0 exist in visited:", 0 in visited
+	  		# print "Updated vertices: ", vertices
+	  		# print "TEAM: ",teams ,"TEAM SCORE: ", teams_score
+	  		if(tuple(teams) not in sets_of_teams.keys() or teams_score > sets_of_teams[tuple(teams)]):
+	  			sets_of_teams[tuple(teams)] = teams_score 	#Contains the best team of each instance. 
+	  										#Two instances are different if they have a different start vertex.
+	  										#We need to choose the team with the instance with the highest score here
+	# print "ALL TEAMS: ", sets_of_teams  								
+	# print "BEST TEAM: ", best_team(sets_of_teams)[0], " SCORE: ", best_team(sets_of_teams)[1]			
+	return best_team(sets_of_teams)[0]
