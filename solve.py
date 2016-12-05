@@ -71,11 +71,11 @@ def parse_instance(file_path):
               adj[i].append(-1)
   return adj, horses
 
-def solve(alg):
+def solve(alg, out_name):
   instances = {}
   instance_nums = []
   algorithms = ALGORITHMS
-  clear_output(alg)
+  clear_output(out_name)
 
   for file in os.listdir("cs170_final_inputs"):
     if file.endswith(".in"):
@@ -101,7 +101,7 @@ def solve(alg):
         else:
             print "\033[91m INVALID SOLUTION, {0}: {1}".format(validity[1], solution)
             return
-    write_solution(alg, bestSolution)
+    write_solution(out_name, bestSolution)
     write_score(alg, instance, bestScore)
     print ("\033[92m\tApproximation: {0}".format(bestSolution)[:100] + "...")
     print ("\tInput Size: {0}".format(len(instances[instance][1])))
@@ -111,7 +111,7 @@ def solve(alg):
     print ("\tSmallest Team Size: {0}".format(len(min(bestSolution, key=len))))
     print ("\tScore: {0}".format(bestScore))
 
-if (len(sys.argv) == 2):
-  solve(sys.argv[1])
+if (len(sys.argv) == 3):
+  solve(sys.argv[1], sys.argv[2])
 else:
   print("ERROR: invalid argument(s).")

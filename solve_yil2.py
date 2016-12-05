@@ -20,16 +20,19 @@ class Queue:
 class Path:
     def __init__(self):
         self.path = []
+        self.elements = set()
         self.weight = 0.0
 
     def appendToPath(self, val, horses):
         self.path.append(val)
+        self.elements.add(val)
         self.weight = self.weight + int(horses[val]) + 0.001
 
     def spawnNewPath(self):
         result = Path()
         result.path = list(self.path)
         result.weight = self.weight
+        result.elements = set(self.elements)
         return result
 
     def currHorse(self):
@@ -39,6 +42,9 @@ class Path:
         numHorses = int(math.ceil((self.weight % 1)*1000))
         weight = int(self.weight)
         return weight * numHorses
+
+    def __len__(self):
+      return len(self.path)
 
 class PriorityQueue:
     def __init__(self):
@@ -56,9 +62,20 @@ class PriorityQueue:
         return len(self._queue)
 
 # GLOBAL VARIABLES
-tryHowManyTimes = 100
+topHowManyHorses = 30
+tryHowManyTimes = 300
 
 # Gets the top topHowManyHorses horses.
+def getTopHorses_Limit(outgoing_edges, topHowManyHorses):
+    q = PriorityQueue()
+    for horse in outgoing_edges:
+        q.push(horse, len(outgoing_edges[horse]))
+    pledgeHorses = []
+    for i in range(0,topHowManyHorses):
+        if q.size() != 0:
+            pledgeHorses.append(q.pop())
+    return pledgeHorses
+
 def getTopHorses(outgoing_edges):
     q = PriorityQueue()
     for horse in outgoing_edges:
@@ -107,9 +124,36 @@ def solve_instance_DFS_Greedy(instance):
     finalRelayTeams = []
     outgoing_edges_base = copy.deepcopy(outgoing_edges)
     while (len(outgoing_edges) > 0):
+        EXIT=False
         possibleSolutions = []
         pledgeHorses = getTopHorses(outgoing_edges)
         for x in range(0, tryHowManyTimes):
+            if EXIT:
+              break
+            # Mess around with this line to change the way you choose a horse
+            horse = chooseHorseDFS(pledgeHorses)
+            initialPath = Path()
+            initialPath.appendToPath(horse, horses)
+            condition = True
+            while condition:
+                currHorse = initialPath.currHorse()
+                maxHorse, maxWeight = -1, -1
+                edge_horses = []
+                for e in outgoing_edges[currHorse]:
+                  if horses[e] > maxWeight and e not in initialPath.elements:
+                    maxWeight, maxHorse = horses[e], e
+                if maxHorse != -1:
+                      initialPath.appendToPath(maxHorse, horses)
+                else:
+                  possibleSolutions.append(initialPath)
+                  if len(initialPath) == len(horses):
+                    EXIT=True
+                  condition = False
+        if EXIT:
+          pass
+        for x in range(0, 200):
+            if EXIT:
+              break
             # Mess around with this line to change the way you choose a horse.
             horse = chooseHorseDFS(pledgeHorses)
             initialPath = Path()
@@ -118,14 +162,103 @@ def solve_instance_DFS_Greedy(instance):
             while condition:
                 currHorse = initialPath.currHorse()
                 maxHorse, maxWeight = -1, -1
+                edge_horses = []
                 for e in outgoing_edges[currHorse]:
+                  if horses[e] > maxWeight and e not in initialPath.elements:
+                    maxWeight, maxHorse = horses[e], e
+                    edge_horses.append((horses[e], e))
+                edge_horses = sorted(edge_horses, key=lambda x: int(x[0]), reverse=False)
+                if maxHorse != -1 & maxWeight != -1:
+                  for weight, horse in edge_horses:
+                    if horse not in initialPath.path:
+                      initialPath.appendToPath(horse,horses)
+                      break
+                else:
+                  if len(initialPath) == len(horses):
+                    EXIT=True
+                  possibleSolutions.append(initialPath)
+                  condition = False
+        if EXIT:
+          pass
+        for x in range(0, 200):
+            if EXIT:
+              break
+            # Mess around with this line to change the way you choose a horse.
+            horse = chooseHorseDFS(pledgeHorses)
+            initialPath = Path()
+            initialPath.appendToPath(horse, horses)
+            condition = True
+            while condition:
+                currHorse = initialPath.currHorse()
+                maxHorse, maxWeight = -1, -1
+                edge_horses = []
+                for e in outgoing_edges[currHorse]:
+                  if horses[e] > maxWeight and e not in initialPath.elements:
+                    maxWeight, maxHorse = horses[e], e
+                    edge_horses.append((horses[e], e))
+                edge_horses = sorted(edge_horses, key=lambda x: int(x[0]), reverse=True)
+                if maxHorse != -1 & maxWeight != -1:
+                  for weight, horse in edge_horses:
+                    if horse not in initialPath.path:
+                      initialPath.appendToPath(horse,horses)
+                      break
+                else:
+                  if len(initialPath) == len(horses):
+                    EXIT=True
+                  possibleSolutions.append(initialPath)
+                  condition = False
+        if EXIT:
+          pass
+        pledgeHorses = getTopHorses_Limit(outgoing_edges, topHowManyHorses)
+        for x in range(0, tryHowManyTimes):
+            if EXIT:
+              break
+            # Mess around with this line to change the way you choose a horse.
+            #horse = chooseHorse(outgoing_edges)
+            horse = chooseHorseDFS(pledgeHorses)
+            initialPath = Path()
+            initialPath.appendToPath(horse, horses)
+            condition = True
+            while condition:
+                currHorse = initialPath.currHorse()
+                maxHorse = -1
+                maxWeight = -1
+                for e in outgoing_edges[currHorse]:
+                    #print(type(horses[e]))
                     if horses[e] > maxWeight and e not in initialPath.path:
                         maxWeight, maxHorse = horses[e], e
                 if maxHorse != -1 and maxHorse not in initialPath.path:
                     initialPath.appendToPath(maxHorse,horses)
                 else:
                     possibleSolutions.append(initialPath)
+                    if len(initialPath) == len(horses):
+                      EXIT=True
                     condition = False
+        if EXIT:
+          pass
+        pledgeHorses = getTopHorses(outgoing_edges)
+        print "\t Doing random, fuck"
+        for x in range(0, 1000000):
+            if EXIT:
+              break
+            # Mess around with this line to change the way you choose a horse.
+            horse = chooseHorseDFS(pledgeHorses)
+            initialPath = Path()
+            initialPath.appendToPath(horse, horses)
+            condition = True
+            while condition:
+                currHorse = initialPath.currHorse()
+                maxHorse, maxWeight = -1, -1
+                edge_horses = []
+                available_horses = set(outgoing_edges[currHorse]) - initialPath.elements
+                if available_horses:
+                  next_horse = random.sample(available_horses, 1)[0]
+                  initialPath.appendToPath(next_horse,horses)
+                else:
+                  if len(initialPath) == len(horses):
+                    EXIT=True
+                  possibleSolutions.append(initialPath)
+                  condition = False
 
         # Get the best overall path.
         best_solution = []

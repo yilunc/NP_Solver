@@ -46,8 +46,8 @@ def is_valid(solution, instance):
     for i in range(0,len(team)-1):
       if team[i+1] in seen:
         return False, "Repeated Horse {0}".format(team[i+1])
-      if (instance[0][team[i]][team[i+1]]==0):
-        return False, "Horse is not a friend"
+      if (instance[0][team[i]][team[i+1]] == 0):
+        return False, "Horses are not friends {0} {1}".format(team[i], team[i+1])
       seen.add(team[i+1])
   if len(seen) != len(instance[1]):
     return False, "Didn't use all horses: {0} {1}".format(len(seen), len(instance[1]))

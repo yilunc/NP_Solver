@@ -61,7 +61,7 @@ topHowManyHorses = 20
 tryHowManyTimes = 10
 
 # Gets the top topHowManyHorses horses.
-def getTopHorses(outgoing_edges):
+def getTopHorses(outgoing_edges, topHowManyHorses):
     q = PriorityQueue()
     for horse in outgoing_edges:
         q.push(horse, len(outgoing_edges[horse]))
