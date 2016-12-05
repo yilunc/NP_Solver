@@ -112,28 +112,7 @@ def solver(instance):
             if element[i] != None:
                 score += int(horses[element[i]])
         finalscore += score * len(element)
-    # print "\tBEFORE COMPRESS: " + str(len(lst))
-    # print "\tAFTER COMPRESS: " + str(len(final))
-    # print "\tTEAMS" 
-    # print final
-    # print "\tSCORE: " + str(finalscore)
-    # print "\tAVERAGE TEAM SIZE: " + str(len_sum/len(final))
-    def valid(teams):
-        seen = set()
-        for team in teams:
-            seen.add(team[0])
-            for i in range(0,len(team)-2):
-                if team[i+1] in seen:
-                    print "INVALID"
-                else:
-                    seen.add(team[i+1])
-                if (adj[team[i]][team[i+1]]==0):
-                    print "INVALID"
-        print "VALID"            
-    print valid(final)
-
-# solver()
-
     print "\tBEFORE COMPRESS: " + str(len(lst))
     print "\tAFTER COMPRESS: " + str(len(final))
+    print final
     return final

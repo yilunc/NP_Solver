@@ -49,6 +49,8 @@ def is_valid(solution, instance):
       if (instance[0][team[i]][team[i+1]]==0):
         return False, "Horse is not a friend"
       seen.add(team[i+1])
+  if len(seen) != len(instance[1]):
+    return False, "Didn't use all horses: {0} {1}".format(len(seen), len(instance[1]))
   return True, ""
 
 def parse_instance(file_path):
@@ -120,11 +122,11 @@ def solve(alg_names=None, in_num=None, out=True):
         print ("\tScore: {0}".format(bestScore))
 
 
-out=True
+out=False
 comp=False
 if "q" in sys.argv:
   sys.argv.remove("q")
-  out=False
+  out=True
 if "c" in sys.argv:
   sys.argv.remove("c")
   comp=True
