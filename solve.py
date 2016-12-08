@@ -1,14 +1,12 @@
 import sys, os
-import solve_sid
-import solve_yil2
+import algorithm
 import solve_tom
 import gurik
 
 ALGORITHMS = {
-              "yilun":  solve_yil2.solve_instance_DFS_Greedy,
+              "yilun":  algorithm.solve_instance_DFS_Greedy,
               "gurik":  gurik.solver,
               "tommy":  solve_tom.solve_instance_DFS_Greedy,
-              "sid" :  solve_sid.solve,
               }
 
 def score_solution(solution, instance):

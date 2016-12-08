@@ -1,14 +1,13 @@
 import sys, os
 import solve_sid
-import solve_yil2
+import algorithm
 import solve_tom
 import gurik
 
 ALGORITHMS = {
-              "yilun":  solve_yil2.solve_instance_DFS_Greedy,
+              "main":  algorithm.solve_instance_DFS_Greedy,
               "gurik":  gurik.solver,
               "tommy":  solve_tom.solve_instance_DFS_Greedy,
-              "sid" :  solve_sid.solve,
               }
 
 def score_solution(solution, instance):
@@ -95,6 +94,7 @@ def solve(alg_names=None, in_num=None, out=True):
 
   runHowManyIterations = 1
   for instance in instance_nums:
+    print instances[instance]
     for alg in algorithms:
         print("\033[94mSolving on {0}.in on {1}'s algorithm... \033[1m \033[93m".format(instance, alg))
         bestSolution = None
